@@ -26,11 +26,12 @@ export default function Login() {
 
       // ✅ Store token securely
       const token = res.data.token;
+      console.log(res.data);
       localStorage.setItem("token", token);
 
       // 🔌 Connect socket after login
       connectSocket();
-
+console.log(res.data);
       // ✅ Redirect to dashboard
       navigate("/");
     } catch (err: any) {

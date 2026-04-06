@@ -1,21 +1,40 @@
+import { useState } from "react";
 import { updateTask, deleteTask } from "../api/tasks";
 
 export default function TaskCard({ task, refresh }: any) {
-  const handleStatusChange = async () => {
-    const nextStatus =
-      task.status === "pending"
-        ? "in-progress"
-        : task.status === "in-progress"
-        ? "completed"
-        : "pending";
+  const [loading, setLoading] = useState(false);
 
-    await updateTask(task._id, { status: nextStatus });
-    refresh();
+  const handleStatusChange = async () => {
+    setLoading(true);
+
+    try {
+      const nextStatus =
+        task.status === "pending"
+          ? "in-progress"
+          : task.status === "in-progress"
+          ? "completed"
+          : "pending";
+
+      await updateTask(task._id, { status: nextStatus });
+      refresh();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = async () => {
-    await deleteTask(task._id);
-    refresh();
+    setLoading(true);
+
+    try {
+      await deleteTask(task._id);
+      refresh();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,16 +45,22 @@ export default function TaskCard({ task, refresh }: any) {
       <div className="flex gap-2 mt-2">
         <button
           onClick={handleStatusChange}
-          className="bg-blue-500 text-white px-2 py-1 rounded"
+          disabled={loading}
+          className={`px-2 py-1 rounded text-white ${
+            loading ? "bg-gray-400" : "bg-blue-500"
+          }`}
         >
-          Update Status
+          {loading ? "Updating..." : "Update Status"}
         </button>
 
         <button
           onClick={handleDelete}
-          className="bg-red-500 text-white px-2 py-1 rounded"
+          disabled={loading}
+          className={`px-2 py-1 rounded text-white ${
+            loading ? "bg-gray-400" : "bg-red-500"
+          }`}
         >
-          Delete
+          {loading ? "Deleting..." : "Delete"}
         </button>
       </div>
     </div>
