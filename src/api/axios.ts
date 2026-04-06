@@ -3,13 +3,13 @@ import axios from "axios";
 
 
 
-// ✅ Base API instance
+
 export const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
   withCredentials: true, // important if using cookies
 });
 
-// ✅ Request interceptor (attach token securely)
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -24,9 +24,12 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const isLoginPath = window.location.pathname === "/login";
+
+    if (err.response?.status === 401 && !isLoginPath) {
+      console.warn("Unauthorized! Logging out...");
       localStorage.removeItem("token");
-      window.location.href = "/login"; // force logout
+      window.location.href = "/login";
     }
     return Promise.reject(err);
   }
