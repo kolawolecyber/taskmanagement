@@ -49,7 +49,7 @@ src/
 
 ## 🔐 Authentication Flow
 
-* JWT token is stored in localStorage after login
+* JWT token is stored in localStorage after login, instead of using http-only but with the time limited for the assesment, I used localStorage
 * Axios interceptor attaches token to every request
 * Protected routes restrict access to authenticated users only
 * Automatic logout on invalid/expired token
